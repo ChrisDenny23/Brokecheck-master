@@ -1,5 +1,8 @@
+import 'package:brokecheck/deposit.dart';
 import 'package:brokecheck/homepage.dart';
+// ignore: unused_import
 import 'package:brokecheck/login.dart';
+import 'package:brokecheck/withdraw.dart';
 import 'package:flutter/material.dart';
 // ignore: unused_import
 import 'package:brokecheck/settings.dart';
@@ -18,11 +21,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const GetStartedPage(),
+      home: const Homepage(),
       routes: {
         '/homepage': (context) => Homepage(),
         '/settings': (context) => Settings(),
         '/getstarted': (context) => GetStartedPage(),
+        '/withdraw': (context) => Withdraw(),
+        '/deposit': (context) => Deposit(),
       },
     );
   }
