@@ -1,18 +1,112 @@
-// ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api
-
+// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously, duplicate_ignore
+import 'package:brokecheck/helper_functions.dart';
+import 'package:brokecheck/homepage.dart';
+import 'package:brokecheck/mytextfield.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-// ignore: unused_import
-import 'package:brokecheck/main.dart';
+
 // ignore: depend_on_referenced_packages
 
 class LoginSignupModal extends StatefulWidget {
+  const LoginSignupModal({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _LoginSignupModalState createState() => _LoginSignupModalState();
 }
 
 class _LoginSignupModalState extends State<LoginSignupModal> {
+  //text =controllers
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController confirmpwController = TextEditingController();
   bool isLogin = true; // Tracks whether the user is on Login or Signup
+
+  //login method
+  void login() async {
+    showDialog(
+      context: context,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      if (mounted) {
+        Navigator.pop(context); // Close loading dialog
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Homepage()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) Navigator.pop(context);
+      // ignore: use_build_context_synchronously
+      displayMessageToUser(e.code, context);
+    }
+  }
+
+  //register method
+  void registerUser() async {
+    //show loading circle
+    showDialog(
+      context: context,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    //make sure passwords match
+    if (passwordController.text != confirmpwController.text) {
+      //pop loading circle
+      Navigator.pop(context);
+
+      //show error message
+      displayMessageToUser("Password don't match", context);
+    }
+    //if passwords do match
+    else {
+      // try creating account
+      try {
+        //create the user
+        // ignore: unused_local_variable
+        UserCredential? userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+                email: emailController.text, password: passwordController.text);
+
+        //create a user document and collect them in firestore
+        Future<void> createUserDocument(UserCredential? UserCredential) async {
+          if (UserCredential != null && UserCredential.user != null) {
+            await FirebaseFirestore.instance
+                .collection("Users")
+                .doc(UserCredential.user!.email)
+                .set({
+              'email': UserCredential.user!.email,
+              'username': usernameController.text
+            });
+          }
+        }
+
+        //create a user document and add to firestore
+        createUserDocument(userCredential);
+
+        //pop loading circle
+        if (context.mounted) Navigator.pop(context);
+      } on FirebaseAuthException catch (e) {
+        //pop the loading circle
+        Navigator.pop(context);
+
+        //display the message to user
+        displayMessageToUser(e.code, context);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,35 +200,35 @@ class _LoginSignupModalState extends State<LoginSignupModal> {
   Widget buildLoginForm() {
     return Column(
       children: [
-        TextField(
-          decoration: InputDecoration(
-            labelText: "Email or Username",
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-        ),
+        //Email or username textfield
+        Mytextfield(
+            label: 'Email', obscureText: false, controller: emailController),
+
         const SizedBox(height: 15),
-        TextField(
-          decoration: InputDecoration(
-            labelText: "Password",
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-          obscureText: true,
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Text(
-            'Forgot Password?',
-            style: TextStyle(
-              fontFamily: 'poppy',
-              fontSize: 10,
-              color: const Color.fromARGB(255, 1, 38, 69),
+
+        //password textfield
+        Mytextfield(
+            label: 'Password',
+            obscureText: true,
+            controller: passwordController),
+
+        // forgot password
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(
+              'Forgot Password?',
+              style: TextStyle(color: Colors.green),
             ),
-          ),
+          ],
         ),
+
         const SizedBox(height: 16),
+
+        //button for login
         ElevatedButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/homepage');
+            login();
           },
           style: ElevatedButton.styleFrom(
             minimumSize: Size(500, 50),
@@ -153,7 +247,10 @@ class _LoginSignupModalState extends State<LoginSignupModal> {
             ),
           ),
         ),
+
         const SizedBox(height: 10),
+
+        // or with divider
         Text(
           '──────────── OR ────────────',
           style: TextStyle(
@@ -162,7 +259,10 @@ class _LoginSignupModalState extends State<LoginSignupModal> {
             fontFamily: 'poppy',
           ),
         ),
+
         const SizedBox(height: 10),
+
+        // login with facebook button
         ElevatedButton.icon(
           onPressed: () {
             // Handle Facebook login
@@ -185,7 +285,10 @@ class _LoginSignupModalState extends State<LoginSignupModal> {
             ),
           ),
         ),
+
         const SizedBox(height: 20),
+
+        //login with google button
         ElevatedButton.icon(
           onPressed: () {
             // Handle Google login
@@ -216,30 +319,39 @@ class _LoginSignupModalState extends State<LoginSignupModal> {
   Widget buildSignupForm() {
     return Column(
       children: [
-        TextField(
-          decoration: InputDecoration(
-            labelText: "Username",
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-        ),
-        const SizedBox(height: 10),
-        TextField(
-          decoration: InputDecoration(
-            labelText: "Email",
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-        ),
-        const SizedBox(height: 10),
-        TextField(
-          decoration: InputDecoration(
-            labelText: "Password",
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-        ),
+        //username textfield
+        Mytextfield(
+            label: 'Username',
+            obscureText: false,
+            controller: usernameController),
+
+        const SizedBox(height: 5),
+
+        //email textfield
+        Mytextfield(
+            label: 'Email', obscureText: false, controller: emailController),
+
+        const SizedBox(height: 5),
+
+        //password textfield
+        Mytextfield(
+            label: 'Password',
+            obscureText: true,
+            controller: passwordController),
+
+        const SizedBox(height: 5),
+
+        //Confirm password textfield
+        Mytextfield(
+            label: 'Confirm Password',
+            obscureText: true,
+            controller: confirmpwController),
+
         const SizedBox(height: 16),
+
         ElevatedButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/homepage');
+            registerUser();
           },
           style: ElevatedButton.styleFrom(
             minimumSize: Size(500, 50),

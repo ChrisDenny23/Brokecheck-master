@@ -1,7 +1,29 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Settings extends StatelessWidget {
-  const Settings({super.key});
+  Settings({super.key});
+
+  //current logged in user
+  final User? currentUser = FirebaseAuth.instance.currentUser;
+
+  // future to fetch user details
+  Future<DocumentSnapshot<Map<String, dynamic>>> getUserDetails() async {
+    return await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(currentUser!.email)
+        .get();
+  }
+
+//logout method
+  void logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    if (context.mounted) {
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/getstarted', (route) => false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -9,11 +31,7 @@ class Settings extends StatelessWidget {
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xFF2E7D32), Color(0XFF66BB6A)],
-            ),
+            color: Colors.green,
           ),
         ),
         title: const Text(
@@ -38,11 +56,7 @@ class Settings extends StatelessWidget {
         children: [
           Container(
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [Color(0xFF2E7D32), Color(0XFF66BB6A)],
-              ),
+              color: Colors.green,
             ),
           ),
           Column(
@@ -60,25 +74,56 @@ class Settings extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Spidey Boy",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'poppy'),
+                        FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                          future: getUserDetails(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Text(
+                                "Loading...",
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  fontFamily: 'poppy',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green,
+                                ),
+                              );
+                            }
+
+                            if (snapshot.hasError) {
+                              return const Text(
+                                "Error",
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  fontFamily: 'poppy',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                ),
+                              );
+                            }
+
+                            if (snapshot.hasData && snapshot.data!.exists) {
+                              return Text(
+                                snapshot.data!['username'],
+                                style: const TextStyle(
+                                  fontSize: 25,
+                                  fontFamily: 'poppy',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              );
+                            }
+                            return const Text(
+                              "Guest",
+                              style: TextStyle(
+                                fontSize: 25,
+                                fontFamily: 'poppy',
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            );
+                          },
                         ),
-                        const Text(
-                          '@spidey69',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.white70,
-                              fontFamily: 'poppylight',
-                              fontWeight: FontWeight.bold),
-                        )
                       ],
                     )
                   ],
@@ -96,16 +141,13 @@ class Settings extends StatelessWidget {
                   child: ListView(
                     padding: const EdgeInsets.all(20),
                     children: [
-                      sectionTitle("Profile Settings"),
-                      settingsTile(Icons.person, "Change Username"),
-                      settingsTile(Icons.person, "Change Display Name"),
-                      settingsTile(Icons.lock, "Change Password"),
-                      const SizedBox(height: 10),
                       sectionTitle("App Settings"),
-                      settingsTile(Icons.palette, "Appearance"),
-                      settingsTile(Icons.info, "About Brokecheck"),
-                      settingsTile(Icons.delete, "Delete Account"),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
+                      settingsTile(Icons.lock_outline, "Change Password"),
+                      settingsTile(Icons.palette_outlined, "Appearance"),
+                      settingsTile(Icons.info_outline, "About Brokecheck"),
+                      settingsTile(Icons.delete_outline, "Delete Account"),
+                      const SizedBox(height: 100),
                       logoutButton(context),
                     ],
                   ),
@@ -151,7 +193,7 @@ class Settings extends StatelessWidget {
     return Text(
       title,
       style: const TextStyle(
-          fontSize: 15,
+          fontSize: 20,
           fontWeight: FontWeight.bold,
           fontFamily: 'poppy',
           color: Colors.grey),
@@ -162,7 +204,7 @@ class Settings extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(
+        title: const Text(
           "Logout",
           style: TextStyle(
               fontFamily: 'poppy', fontWeight: FontWeight.bold, fontSize: 20),
@@ -183,7 +225,7 @@ class Settings extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, '/getstarted');
+              logout(context);
             },
             child: const Text("Logout",
                 style: TextStyle(

@@ -12,7 +12,7 @@ class Mybutton extends StatelessWidget {
       child: Container(
         alignment: Alignment.bottomCenter,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.black,
           borderRadius: BorderRadius.circular(50),
         ),
         padding: EdgeInsets.all(20),
@@ -22,6 +22,7 @@ class Mybutton extends StatelessWidget {
             text,
             style: TextStyle(
                 fontSize: 28,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'quickie'),
           ),

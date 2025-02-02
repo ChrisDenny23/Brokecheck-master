@@ -11,7 +11,7 @@ class GetStartedPage extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("images/bg1.jpg"), // Background image
+            image: AssetImage("images/bg5.jpg"), // Background image
             fit: BoxFit.fill,
           ),
         ),
