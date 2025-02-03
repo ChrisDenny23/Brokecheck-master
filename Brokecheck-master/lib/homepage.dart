@@ -1,8 +1,11 @@
+// ignore_for_file: unused_import
+
 import 'package:brokecheck/addcashbook.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:brokecheck/customnavbar.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -153,9 +156,14 @@ class _HomepageState extends State<Homepage> {
   }
 }
 
-class HomeContent extends StatelessWidget {
+class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
 
+  @override
+  State<HomeContent> createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -292,9 +300,121 @@ class HomeContent extends StatelessWidget {
               ],
             ),
           ),
-          // Add your cashbooks list here
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('cashbook data')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final cashbooks = snapshot.data!.docs;
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: cashbooks.length,
+                  itemBuilder: (context, index) {
+                    final cashbookData =
+                        cashbooks[index].data() as Map<String, dynamic>;
+                    return CashbookListItem(cashbookData: cashbookData);
+                  },
+                );
+              } else if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                    'Error: ${snapshot.error}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.red,
+                    ),
+                  ),
+                );
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
+          ),
         ],
       ),
+    );
+  }
+}
+
+class CashbookListItem extends StatelessWidget {
+  final Map<String, dynamic> cashbookData;
+
+  const CashbookListItem({super.key, required this.cashbookData});
+
+  @override
+  Widget build(BuildContext context) {
+    final iconData = IconData(
+      cashbookData['icon'] ?? Icons.account_balance_wallet.codePoint,
+      fontFamily: 'MaterialIcons',
+    );
+    final cashbookName = cashbookData['name'];
+    final createdAt = cashbookData['created_at'];
+    final formattedDate = createdAt != null
+        ? DateFormat('MMM d, yyyy').format(createdAt.toDate())
+        : 'N/A';
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                Icon(iconData, color: Colors.black54, size: 32),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        cashbookName,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                          fontFamily: 'poppy',
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        formattedDate,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
+                          fontFamily: 'poppylight',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                IconButton(
+                  onPressed: () {
+                    // Handle edit or delete functionality
+                  },
+                  icon: const Icon(Icons.more_vert, color: Colors.black54),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const Divider(
+          color: Colors.grey, // Color of the divider
+          height: 1, // Height of the divider
+          thickness: 1, // Thickness of the divider line
+          indent: 16, // Indent from the left
+          endIndent: 16, // Indent from the right
+        ),
+      ],
     );
   }
 }
