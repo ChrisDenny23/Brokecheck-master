@@ -35,7 +35,7 @@ class CustomNavBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(30),
             child: NavigationBar(
               height: 60,
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.white54,
               elevation: 0,
               indicatorColor:
                   Colors.green.withOpacity(0.2), // ✅ Softer highlight

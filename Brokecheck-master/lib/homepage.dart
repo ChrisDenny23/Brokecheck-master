@@ -1,3 +1,4 @@
+import 'package:brokecheck/addcashbook.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:brokecheck/customnavbar.dart';
@@ -129,7 +130,7 @@ class _HomepageState extends State<Homepage> {
       floatingActionButton: _selectedIndex == 0
           ? FloatingActionButton.extended(
               onPressed: () {
-                // Add cashbook logic here
+                showAddCashbookModal(context);
               },
               icon: const Icon(
                 Icons.add,
