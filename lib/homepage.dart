@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:brokecheck/customnavbar.dart';
 import 'package:flutter/material.dart';
+import 'package:brokecheck/mywidgets/cards.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -23,9 +24,10 @@ class _HomepageState extends State<Homepage> {
   final User? currentUser = FirebaseAuth.instance.currentUser;
 
   // Future to fetch user details
-  Future<DocumentSnapshot<Map<String, dynamic>>> getUserDetails() async {
+  Future<DocumentSnapshot<Map<String, dynamic>>?> getUserDetails() async {
     if (currentUser == null || currentUser!.email == null) {
-      throw Exception("User not logged in or email is null");
+      // throw Exception("User not logged in or email is null"); //! Chris's code line
+      return null;
     }
     return await FirebaseFirestore.instance
         .collection("Users")
@@ -44,7 +46,7 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        title: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>?>(
           future: getUserDetails(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -66,7 +68,7 @@ class _HomepageState extends State<Homepage> {
                   fontSize: 25,
                   fontFamily: 'poppy',
                   fontWeight: FontWeight.bold,
-                  color: Colors.red,
+                  color: Colors.blue,
                 ),
               );
             }
@@ -344,8 +346,15 @@ class CardsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('Cards Page'),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
+      child: Column(
+        // spacing: 14,
+        children: [
+          Mycard(Cardtitle: "Abhishek"),
+          Mycard(Cardtitle: "Abhishek"),
+        ],
+      ),
     );
   }
 }

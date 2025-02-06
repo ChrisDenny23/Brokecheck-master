@@ -9,7 +9,10 @@ class Settings extends StatelessWidget {
   final User? currentUser = FirebaseAuth.instance.currentUser;
 
   // future to fetch user details
-  Future<DocumentSnapshot<Map<String, dynamic>>> getUserDetails() async {
+  Future<DocumentSnapshot<Map<String, dynamic>>?> getUserDetails() async {
+    if (currentUser == null || currentUser!.email == null) {
+      return null; // Return null instead of throwing an error
+    }
     return await FirebaseFirestore.instance
         .collection("Users")
         .doc(currentUser!.email)
@@ -74,7 +77,7 @@ class Settings extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                        FutureBuilder<DocumentSnapshot<Map<String, dynamic>>?>(
                           future: getUserDetails(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
