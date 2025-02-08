@@ -12,6 +12,7 @@ class _AbhihomedesState extends State<Abhihomedes> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       backgroundColor: Colors.black,
       bottomNavigationBar: NavigationBar(
         destinations: [

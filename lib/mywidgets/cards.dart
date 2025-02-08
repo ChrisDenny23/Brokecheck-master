@@ -16,7 +16,7 @@ class Mycard extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(25), // Ensure rounded corners
         child: SizedBox(
-          width: 370 - 26,
+          width: 370 - 26, //! size minus the padding
           height: 220 - 26,
           child: Stack(
             children: [
