@@ -1,3 +1,4 @@
+import 'package:brokecheck/abhihomedes.dart';
 import 'package:brokecheck/deposit.dart';
 import 'package:brokecheck/firebase_options.dart';
 import 'package:brokecheck/homepage.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         '/getstarted': (context) => GetStartedPage(),
         '/withdraw': (context) => Withdraw(),
         '/deposit': (context) => Deposit(),
+        '/abhihomedes': (context) => Abhihomedes(),
       },
     );
   }

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:brokecheck/customnavbar.dart';
 import 'package:flutter/material.dart';
 import 'package:brokecheck/mywidgets/cards.dart';
+import 'package:brokecheck/mywidgets/accordion.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -304,13 +305,19 @@ class HomeContent extends StatelessWidget {
                       "Updated on date month year",
                       style: TextStyle(fontFamily: 'poppylight'),
                     ),
-                    trailing: Text(
-                      "+6969",
-                      style: TextStyle(
-                          color: Colors.green[800],
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'poppy'),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "+6969",
+                          style: TextStyle(
+                              color: Colors.green[800],
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'poppy'),
+                        ),
+                        Icon(Icons.more_vert),
+                      ],
                     ),
                   ),
                   // Divider between cashbook items
@@ -335,8 +342,13 @@ class SubscriptionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('Subscription Page'),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ListView.separated(
+        itemCount: 13, // Number of Accordions
+        separatorBuilder: (context, index) => SizedBox(height: 12), // Spacing
+        itemBuilder: (context, index) => Accordion(),
+      ),
     );
   }
 }
@@ -348,7 +360,7 @@ class CardsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
-      child: Column(
+      child: ListView(
         // spacing: 14,
         children: [
           Mycard(Cardtitle: "Abhishek"),

@@ -13,73 +13,72 @@ class Mycard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      child: Stack(
-        children: [
-          // Background SVG
-          Positioned.fill(
-            child: SvgPicture.asset(
-              "images/CardBG/Blue.svg", // Background SVG
-              // fit: BoxFit.cover, // Cover the entire container
-            ),
-          ),
-
-          // Foreground Content
-          Container(
-            width: 370,
-            height: 220,
-            padding: EdgeInsets.all(26),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(25), // Rounded Corners
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              // crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween, // Space between logos
-                  children: [
-                    SvgPicture.asset("images/CardBG/SBI.svg",
-                        width: 72), // Top Left Logo
-                    SvgPicture.asset(
-                        "images/GlobalNetwork/MasterCard.svg"), // Top Right Logo
-                  ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(25), // Ensure rounded corners
+        child: SizedBox(
+          width: 370 - 26,
+          height: 220 - 26,
+          child: Stack(
+            children: [
+              // Background SVG
+              Positioned.fill(
+                child: SvgPicture.asset(
+                  "images/CardBG/Green.svg",
+                  fit: BoxFit.cover, // Ensures the SVG fills properly
                 ),
-                // SizedBox(height: 16), // Spacing
-                // Spacer (),
-                Row(
+              ),
+
+              // Foreground Content
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 26, vertical: 26),
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start, // Align text left
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          Cardtitle,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ), // Bottom Left Text
-                        Text(
-                          ExpiryDate ?? "Expires: xx/xx",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w300,
-                            color: Colors.white,
-                          ),
+                        SvgPicture.asset("images/BankLogos/SBI.svg", width: 72),
+                        SvgPicture.asset("images/GlobalNetwork/Visa.svg",
+                            width: 35),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              Cardtitle,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              ExpiryDate ?? "Expires: xx/xx",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SvgPicture.asset(
+                          "images/GlobalNetwork/Contactless.svg",
+                          width: 20,
+                          color: Colors.white,
                         ),
                       ],
                     ),
-                    SvgPicture.asset("images/GlobalNetwork/MasterCard.svg",
-                        width: 40), // Contactless Icon
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
