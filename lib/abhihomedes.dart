@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:brokecheck/mywidgets/accordion.dart';
 
 class Abhihomedes extends StatefulWidget {
-  Widget Items;
+  final Widget Items;
 
   Abhihomedes({super.key, required this.Items});
 
