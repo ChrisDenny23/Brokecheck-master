@@ -104,7 +104,7 @@ class _HomepageState extends State<Homepage> {
         actions: <Widget>[
           IconButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/settings');
+              Navigator.pushNamed(context, '/mywidgets/favorite');
             },
             icon: const Icon(
               Icons.settings,

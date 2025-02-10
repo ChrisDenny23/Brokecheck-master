@@ -6,6 +6,7 @@ import 'package:brokecheck/withdraw.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:brokecheck/settings.dart';
+import 'package:brokecheck/mywidgets/favorite.dart';
 import 'get_started.dart';
 
 void main() async {
@@ -28,7 +29,8 @@ class MyApp extends StatelessWidget {
         '/getstarted': (context) => GetStartedPage(),
         '/withdraw': (context) => Withdraw(),
         '/deposit': (context) => Deposit(),
-        '/abhihomedes': (context) => Abhihomedes(),
+        // '/abhihomedes': (context) => Abhihomedes(Items: widge,),
+        '/mywidgets/favorite': (context) => Favorite(),
       },
     );
   }

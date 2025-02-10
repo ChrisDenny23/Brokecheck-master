@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:brokecheck/mywidgets/accordion.dart';
 
 class Abhihomedes extends StatefulWidget {
-  const Abhihomedes({super.key});
+  Widget Items;
+
+  Abhihomedes({super.key, required this.Items});
 
   @override
   State<Abhihomedes> createState() => _AbhihomedesState();
@@ -45,15 +47,7 @@ class _AbhihomedesState extends State<Abhihomedes> {
             borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(35),
                 bottomRight: Radius.circular(35))),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListView.separated(
-            itemCount: 13, // Number of Accordions
-            separatorBuilder: (context, index) =>
-                SizedBox(height: 12), // Spacing
-            itemBuilder: (context, index) => Accordion(),
-          ),
-        ),
+        child: widget.Items,
       ),
     );
   }
